@@ -1,0 +1,32 @@
+{
+  "name": "note-taking-app",
+  "version": "1.0.0",
+  "description": "This is a full stack application for a note taking app. Technologies used in developing this application include CSS, HTML, Javascript, EJS, Node JS, Bootstrap, and MongoDB.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hsn200406/Note-taking-App.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/hsn200406/Note-taking-App/issues"
+  },
+  "homepage": "https://github.com/hsn200406/Note-taking-App#readme",
+  "dependencies": {
+    "body-parser": "^2.2.2",
+    "ejs": "^4.0.1",
+    "express": "^5.2.1",
+    "method-override": "^3.0.0",
+    "mongoose": "^9.1.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
