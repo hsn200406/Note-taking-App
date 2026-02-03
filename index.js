@@ -1,104 +1,69 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
-const ejs = require('ejs');
 const methodOverride = require('method-override');
+const passport = require('passport');
+
 const app = express();
 const PORT = 3000;
 
-const Note = require('./models/Note');
+// Import routers
+const notesRoutes = require('./routers/notes');
+const authRoutes = require('./routers/auth');
+const session = require('express-session');
 
 // Middleware
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
-app.use(methodOverride('_method'));
 app.use(express.json());
+app.use(methodOverride('_method'));
 
-
-app.get('/', async (req, res) => {
-    try {
-        const notes = await Note.find().sort({ date: -1 });
-        res.render('index', {
-            title: 'Note Taking App',
-            notes: notes
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send({ message: 'Error retrieving notes' });
+const loggedInMiddleware = (req, res, next) => {
+    if (req.user) {
+        next();
     }
-});
-
-app.post('/notes', async (req, res) => {
-    const { title, content } = req.body;
-
-    //Server side validation
-    if (!title || !content || !title.trim() || !content.trim()) {
-        return res.status(400).send({ message: 'Title and content are required to add a note' });
+    else {
+        // res.status(401).json({ message: 'Unauthorized access. Please login to continue.' });
+        res.redirect('/auth/login');
     }
+};
 
-    try {
-        await Note.create({ title: title.trim(), content: content.trim() });
-        res.redirect('/');
-    } catch (err) {
-        console.error(err);
-        res.status(500).send({ message: 'Error adding note' });
+// Session Middleware Setup
+app.use(session({
+  secret: '([M@jQaFokwJ?Xz8',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+     secure: false,  // Set to true if using HTTPS
+     maxAge: 1000 * 60 * 60 * 24 // 1 hour
     }
+}));
 
-});
+app.use(passport.session());
 
-app.put('/notes/:id', async (req, res) => {
-    const { id } = req.params;
-    const { title, content } = req.body;
-
-    // Server side validation
-    if (!title || !content || !title.trim() || !content.trim()) {
-        return res.status(400).send({ message: 'Title and content are required to update a note' });
-    }
-
-    try {
-        const note = await Note.findByIdAndUpdate(
-            id,
-            { title: title.trim(), content: content.trim() },
-            { new: true }
-        )
-
-        if (!note) return res.status(404).send({ message: 'Note not found' });
-
-        res.redirect('/');
-    } catch (err) {
-        console.error(err);
-        res.status(500).send({ message: 'Error updating note' });
-    }
-
-});
-
-app.delete('/notes/:id', async (req, res) => {
-    const {id} = req.params;
-
-    try {
-        const deletedNote = await Note.findByIdAndDelete(id);
-
-        if (!deletedNote) {
-            return res.status(404).send({ message: 'Note not found' });
-        }
-        res.redirect('/');
-    } catch (err) {
-        console.error(err);
-        res.status(500).send({ message: 'Error deleting note' });
-    }
-});
-
-// Add DB connection here
+// Connect to DB
 mongoose.connect('mongodb://localhost:27017/notesApp')
-    .then(() => {
-        console.log('Connected to MongoDB');
-    })
-    .catch(err => {
-        console.error('Error connecting to MongoDB', err);
-    });
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.error('Error connecting to MongoDB', err));
 
+// Redirect root to /notes
+app.get('/', (req, res) => res.redirect('/notes'));
+
+// Route requests to the auth router for handling authentication endpoints (register, login, logout)
+app.use('/auth', authRoutes);         // Auth routes (login/register)
+// Route requests to the notes router for handling note-related endpoints
+app.use('/notes', loggedInMiddleware, notesRoutes);   // Notes routes
+
+app.use((err, req, res, next) => {
+    console.error(err);
+    const status = err.status || err.statusCode || 500;
+    res.status(status).send({ message: err.message || 'Internal Server Error' });
+});
+
+
+// Start server
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Server running on http://localhost:${PORT}`);
 });
