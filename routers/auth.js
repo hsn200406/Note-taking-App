@@ -11,12 +11,12 @@ const crypto = require('crypto');
 passport.use(new LocalStrategy(async function verify(username, password, callback) {
     try {
         const user = await User.findOne({ username });
-        if (!user) { return callback(null, false, { message: 'Incorrect username or password.' }); }
+        if (!user) { return callback(null, false, { message: 'This user does not exist' }); }
 
         crypto.pbkdf2(password, Buffer.from(user.passwordSalt, 'base64'), 310000, 32, 'sha256', function(err, hashedPassword) {
             if (err) { return callback(err); }
             if (!crypto.timingSafeEqual(Buffer.from(user.hashedPassword, 'base64'), hashedPassword)) {
-                return callback(null, false, { message: 'Incorrect username or password.' });
+                return callback(null, false, { message: 'Incorrect password, try again' });
             }
             return callback(null, user);
         });
@@ -77,10 +77,21 @@ router.post('/register', async (req, res, next) => {
 });
 
 // Login Existing User
-router.post('/login', passport.authenticate('local', {
-  successRedirect: '/notes',
-  failureRedirect: '/auth/login'
-}));
+router.post('/login', (req, res, next) => {
+  passport.authenticate('local', (err, user, info) => {
+    if (err) return next(err);
+
+    if (!user) {
+      return res.render('login', { error: info.message, page: 'login', user: null });
+    }
+
+    req.login(user, (err) => {
+      if (err) return next(err);
+      res.redirect('/notes');
+    });
+
+    }) (req, res, next);
+});
 
 // Logout User
 router.post('/logout', function(req, res, next){
