@@ -106,7 +106,7 @@ router.post('/login', (req, res, next) => {
 
     req.login(user, (err) => {
       if (err) return next(err);
-      res.redirect('/notes');
+      res.redirect('/home');
     });
 
     }) (req, res, next);

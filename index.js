@@ -55,12 +55,12 @@ mongoose.connect('mongodb://localhost:27017/notesApp')
 
 // Root route -> Home page
 app.get('/home', (req, res) => {
-    if (req.user) {
-        res.redirect('/notes');
-    } else {
-        res.render('home', { user: req.user, page: 'home' });
-    }
+    res.render('home', {
+        user: req.user || null,   // logged-in user if exists
+        page: 'home'
+    });
 });
+
 
 
 // Route requests to the auth router for handling authentication endpoints (register, login, logout)
