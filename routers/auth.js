@@ -10,7 +10,10 @@ const crypto = require('crypto');
 
 passport.use(new LocalStrategy(async function verify(username, password, callback) {
     try {
-        const user = await User.findOne({ username });
+
+        const usernameNormalized = username.trim().toLowerCase();
+
+        const user = await User.findOne({ username: usernameNormalized });
         if (!user) { return callback(null, false, { message: 'This user does not exist' }); }
 
         crypto.pbkdf2(password, Buffer.from(user.passwordSalt, 'base64'), 310000, 32, 'sha256', function(err, hashedPassword) {
@@ -45,9 +48,25 @@ router.post('/register', async (req, res, next) => {
     if (!req.body.username || !req.body.password) {
         return next({ message: 'Username and password are required' });
     }
-    const user = await User.findOne({ username: req.body.username });
+
+    const usernameNormalized = req.body.username.trim().toLowerCase();
+
+    const user = await User.findOne({ username: usernameNormalized });
     if (user) {
-        return next({ message: 'User already exists. Please choose another name' });
+        // return next({ message: 'User already exists. Please choose another name' });
+        return res.render('register', { error: 'User already exists. Please choose another name', page: 'register', user: null });
+    }
+    
+    if (usernameNormalized.length < 6) {
+        return res.render('register', { error: 'Username must be at least 6 characters long', page: 'register', user: null });
+    }
+    if (req.body.password.length < 12) {
+        return res.render('register', { error: 'Password must be at least 12 characters long', page: 'register', user: null });
+    }
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$/;
+    if (!passwordRegex.test(req.body.password)) {
+        return res.render('register', { error: 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character', page: 'register', user: null });
     }
 
     const salt = crypto.randomBytes(12);
@@ -57,7 +76,7 @@ router.post('/register', async (req, res, next) => {
 
         try{
             const newUser = await User.create({
-                username: req.body.username,
+                username: usernameNormalized,
                 hashedPassword: hashedPassword.toString('base64'),
                 passwordSalt: salt.toString('base64')
         });
@@ -80,7 +99,7 @@ router.post('/register', async (req, res, next) => {
 router.post('/login', (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
     if (err) return next(err);
-
+    
     if (!user) {
       return res.render('login', { error: info.message, page: 'login', user: null });
     }
