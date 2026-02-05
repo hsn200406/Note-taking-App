@@ -30,6 +30,11 @@ const loggedInMiddleware = (req, res, next) => {
     }
 };
 
+app.get('/', (req, res) => {
+    res.redirect('/home');
+});
+
+
 // Session Middleware Setup
 app.use(session({
   secret: '([M@jQaFokwJ?Xz8',
@@ -48,8 +53,15 @@ mongoose.connect('mongodb://localhost:27017/notesApp')
     .then(() => console.log('Connected to MongoDB'))
     .catch(err => console.error('Error connecting to MongoDB', err));
 
-// Redirect root to /notes
-app.get('/', (req, res) => res.redirect('/notes'));
+// Root route -> Home page
+app.get('/home', (req, res) => {
+    if (req.user) {
+        res.redirect('/notes');
+    } else {
+        res.render('home', { user: req.user, page: 'home' });
+    }
+});
+
 
 // Route requests to the auth router for handling authentication endpoints (register, login, logout)
 app.use('/auth', authRoutes);         // Auth routes (login/register)

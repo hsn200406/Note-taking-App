@@ -93,13 +93,13 @@ router.post('/logout', function(req, res, next){
 // Show register page
 router.get('/register', (req, res) => {
   const error = req.query.error || null;  // optional error from query string
-  res.render('register', { error }); // renders register.ejs
+  res.render('register', { error, user: req.user, page: 'register' }); // renders register.ejs
 });
 
 // Show login page
 router.get('/login', (req, res) => {
   const error = req.query.error || null;  // optional error from query string
-  res.render('login', { error }); // renders login.ejs
+  res.render('login', { error, user: req.user, page: 'login' }); // renders login.ejs
 });
 
 module.exports = router;
