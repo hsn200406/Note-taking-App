@@ -5,15 +5,19 @@ const { Note } = require('../models/models');
 // Display all notes (main page)
 router.get('/', async (req, res) => {
     try {
-        const notes = await Note.find({
-        user: req.user.id
-        }).sort({ date: -1 });
+        const notes = await Note.find({ user: req.user.id })
+            .sort({ 
+                updatedAt: -1,  // first sort by updatedAt descending
+                createdAt: -1   // then sort by createdAt descending if no updatedAt
+            });
+
         res.render('index', { title: 'Note Taking App', notes, user: req.user, page: 'notes' });
     } catch (err) {
         console.error(err);
         res.status(500).send({ message: 'Error retrieving notes' });
     }
 });
+
 
 // Show create form
 router.get('/new', (req, res) => {
@@ -48,6 +52,27 @@ router.post('/', async (req, res) => {
     }
 });
 
+router.get('/:id', async (req, res) => {
+  try {
+    const note = await Note.findOne({
+      _id: req.params.id,
+      user: req.user.id
+    });
+
+    if (!note) return res.redirect('/notes');
+
+    res.render('view', {
+    note,
+    user: req.user,
+    page: 'notes'
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.redirect('/notes');
+  }
+});
+
 // Update note
 router.put('/:id', async (req, res) => {
     const { id } = req.params;
@@ -58,8 +83,12 @@ router.put('/:id', async (req, res) => {
     try {
         const note = await Note.findByIdAndUpdate(
             {_id: id, user: req.user.id},
-            { title: title.trim(), content: content.trim() },
-            { new: true }
+            { 
+                title: title.trim(),
+                content: content.trim(),
+                updatedAt: new Date()
+             },
+            { new: true },
         );
         if (!note) return res.status(404).send({ message: 'Note not found' });
         // res.json({ message: 'Note updated successfully', note });

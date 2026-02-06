@@ -10,6 +10,7 @@ const PORT = 3000;
 // Import routers
 const notesRoutes = require('./routers/notes');
 const authRoutes = require('./routers/auth');
+const usersRoutes = require('./routers/users');
 const session = require('express-session');
 
 // Middleware
@@ -62,11 +63,12 @@ app.get('/home', (req, res) => {
 });
 
 
-
 // Route requests to the auth router for handling authentication endpoints (register, login, logout)
 app.use('/auth', authRoutes);         // Auth routes (login/register)
 // Route requests to the notes router for handling note-related endpoints
 app.use('/notes', loggedInMiddleware, notesRoutes);   // Notes routes
+// Route requests to the users router for handling user settings and account management
+app.use('/users', loggedInMiddleware, usersRoutes);   // Users routes
 
 app.use((err, req, res, next) => {
     console.error(err);

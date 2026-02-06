@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - Note Taking App</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+  <%- include('partials/header', { page: 'settings', user: user }) %>
+
+  <div class="container py-5">
+
+    <!-- Info Alert -->
+    <div class="alert alert-info d-flex align-items-center" role="alert">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-info-circle me-2" viewBox="0 0 16 16">
+        <path d="m8.93.456-6.28 3.63A2 2 0 0 0 2 5.884v6.232a2 2 0 0 0 .713 1.679l6.28 3.627a3 3 0 0 0 4.574-2.296c.205-1.08.268-2.457.268-5.112 0-2.655-.064-4.032-.268-5.112A3 3 0 0 0 8.93.456ZM6.702 5.78a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM7.5 11a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Z"/>
+      </svg>
+      <div>Your account and data are secure. You can update info or delete your account anytime.</div>
+    </div>
+
+    <!-- Profile Info Card -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-circle me-2" viewBox="0 0 16 16">
+            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
+            <path d="M8 14s3-1.5 3-2.5c0-.667-.857-1.5-3-1.5s-3 .833-3 1.5S5 14 8 14Z"/>
+          </svg>
+          Profile Information
+        </h5>
+      </div>
+      <div class="card-body">
+        <p><strong>Username:</strong> <%= userDetails.username %></p>
+        <p><strong>Account Created:</strong> <%= new Date(userDetails.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %></p>
+        <p><strong>Last Login:</strong> 
+          <% if (userDetails.lastLoginAt) { %>
+            <%= new Date(userDetails.lastLoginAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %>
+          <% } else { %>
+            <span class="text-muted">Never</span>
+          <% } %>
+        </p>
+      </div>
+    </div>
+
+    <!-- Account Stats Card -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-bar-chart-fill me-2" viewBox="0 0 16 16">
+            <path d="M1 11a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-3zm5-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-7zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V2z"/>
+          </svg>
+          Account Statistics
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="row text-center">
+          <div class="col-md-6">
+            <p class="mb-1"><strong><%= notesCount %></strong></p>
+            <small>Total Notes</small>
+          </div>
+          <div class="col-md-6">
+            <p class="mb-1" id="accountAge">-</p>
+            <small>Days Active</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="card border-danger mb-4">
+      <div class="card-header bg-danger text-white">
+        <h5>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-exclamation-triangle-fill me-2" viewBox="0 0 16 16">
+            <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0l-5.708 9.762a1.13 1.13 0 0 0 .98 1.672h11.436a1.13 1.13 0 0 0 .98-1.672L8.982 1.566ZM8 5c.535 0 .954.462.954.999l-.03 1.992a.926.926 0 0 1-1.848 0L7.046 5.999A.954.954 0 0 1 8 5zm.7 9.193c-.437.574-1.456.574-1.93 0l-.468-.467A.926.926 0 0 1 6.604 13h2.792a.924.924 0 0 1 .606 1.591l-.461.467Z"/>
+          </svg>
+          Danger Zone
+        </h5>
+      </div>
+      <div class="card-body">
+        <p>Deleting your account is permanent. <strong>All notes and data will be lost.</strong></p>
+        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+          Delete Account
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Delete Account Modal -->
+  <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-danger" id="deleteAccountModalLabel">Confirm Account Deletion</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Enter your password to permanently delete your account.</p>
+          <input type="password" id="deletePassword" class="form-control mb-2" placeholder="Password">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete Account</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Account age & delete logic -->
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const response = await fetch('/users/stats');
+        const data = await response.json();
+        document.getElementById('accountAge').textContent = data.accountAgeDays;
+      } catch (err) {
+        document.getElementById('accountAge').textContent = 'N/A';
+      }
+
+      document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+        const password = document.getElementById('deletePassword').value;
+        if (!password) return alert('Please enter your password');
+
+        try {
+          const res = await fetch('/users/account', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password })
+          });
+          const data = await res.json();
+          if (res.ok) {
+            alert('Account deleted. Redirecting to home...');
+            window.location.href = '/home';
+          } else {
+            throw new Error(data.message || 'Failed to delete account');
+          }
+        } catch (err) {
+          alert('Error: ' + err.message);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

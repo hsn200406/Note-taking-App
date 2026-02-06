@@ -13,7 +13,235 @@
 </head>
   <body>
     <%- include('partials/header', { page: 'home', user: user}) %>
-    <h1 class="text-center mt-5">This is the Home Page</h1>
+    
+    <!-- Hero Section -->
+    <section class="hero-section bg-gradient py-5">
+      <div class="container py-5">
+        <div class="row align-items-center">
+          <div class="col-lg-6 mb-4 mb-lg-0">
+            <h1 class="display-4 fw-bold mb-4">
+              Welcome to Note Stream<%= user ? ', ' + user.username : '' %>
+            </h1>
+            <p class="lead mb-4">Your intelligent note-taking companion designed for professionals, students, and creative minds. Capture your thoughts, organize your ideas, and unlock your full potential with our intuitive and powerful note-taking platform.</p>
+            <div class="d-flex gap-3 flex-wrap">
+              <% if (!user) { %>
+                <a href="/auth/register" class="btn btn-primary btn-lg">Get Started Free</a>
+                <a href="/auth/login" class="btn btn-outline-primary btn-lg">Sign In</a>
+              <% } else { %>
+                <a href="/notes" class="btn btn-primary btn-lg">Go to My Notes</a>
+              <% } %>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="feature-illustration bg-light rounded-3 p-5 text-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" fill="currentColor" class="bi bi-file-earmark-text text-primary" viewBox="0 0 16 16">
+                <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z"/>
+                <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5L9.5 0zm0 1v2h2L9.5 1z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section py-5 bg-light">
+      <div class="container">
+        <h2 class="text-center mb-5 fw-bold">Powerful Features</h2>
+        <div class="row g-4">
+          <div class="col-md-6 col-lg-3">
+            <div class="feature-card p-4 bg-white rounded-3 shadow-sm h-100">
+              <div class="feature-icon mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="#0d6efd" class="bi bi-lightning-fill" viewBox="0 0 16 16">
+                  <path d="m8 5.338 5.899 3.476V7.72L8 4.377.101 7.72v.99L8 5.338Z"/>
+                </svg>
+              </div>
+              <h5 class="fw-bold mb-2">Quick & Responsive</h5>
+              <p class="text-muted small">Lightning-fast performance with real-time synchronization. Create, edit, and access your notes instantly from any device.</p>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="feature-card p-4 bg-white rounded-3 shadow-sm h-100">
+              <div class="feature-icon mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="#0d6efd" class="bi bi-shield-check" viewBox="0 0 16 16">
+                  <path d="M5.338 1.59a61.44 61.44 0 0 0-2.837.856.481.481 0 0 0-.328.39c-.554 4.157.226 7.694 2.616 9.142a.641.641 0 0 0 .708-1.762c-2.01-1.138-2.679-4.144-2.679-6.424 0-.126.029-.252.06-.372a.91.91 0 0 1 .818-.562q.708 0 .958.486c.086.1.15.389.166.658.024.482.074 1.144.101 1.823.073 1.813.14 3.694.209 5.459.038.632.074 1.272.14 1.9.066.628.231 1.459.972 2.29.426.485.583.716.583 1.14 0 .384-.277.723-.691.723-.6 0-1.58-.476-2.358-1.637-.735-1.033-1.433-2.735-1.433-4.121 0-.775.066-1.644.174-2.584z"/>
+                  <path d="M13.998 5.083 14 7.968c0 .814-.39 1.614-1.849 2.connects1.078 2.447 2.026 2.589 3.005 3.968 1.33 1.348 1.705 3.121 1.705 4.137 0 1.775-.783 3.458-1.868 4.166-.23.14-.479.171-.781.171-.621 0-1.433-.375-2.206-1.071-.723-.599-1.44-1.555-2.rentals.062-1.032-1.582-1.44-3.681-1.44-5.532 0-.384.028-.768.086-1.152h-4.079a.5.5 0 0 1 0-1h4.509c.04-.193.076-.383.127-.571.051-.188.122-.37.203-.545.017-.033.034-.066.05-.1.037-.07.074-.141.117-.211.058-.1.12-.194.184-.284.064-.09.13-.179.2-.265l.06-.07c.029-.034.058-.067.087-.1.069-.079.137-.157.207-.232.139-.149.283-.291.432-.428.15-.138.304-.27.464-.395.16-.125.325-.242.495-.351.17-.11.344-.211.524-.303.18-.092.363-.177.551-.253.188-.076.379-.145.572-.206.162-.052.326-.1.492-.143.166-.043.334-.08.502-.11.168-.03.336-.054.504-.07.168-.017.336-.027.504-.027.335 0 .67.008 1.003.02.332.013.662.033.988.059m-14-.993c.412 0 .824.008 1.232.024.407.016.811.04 1.209.07.398.031.79.071 1.174.118.384.047.759.104 1.123.17.364.066.717.14 1.055.22.338.08.66.166.962.257.302.09.584.185.843.283.258.099.492.2.7.302.208.102.389.204.541.305.077.049.148.096.212.14.081-.098.155-.203.22-.316.065-.113.127-.233.185-.361.058-.128.113-.264.165-.407.052-.143.1-.292.144-.447.044-.155.084-.316.12-.482.036-.166.066-.336.092-.509.026-.173.046-.348.062-.525.016-.177.026-.355.032-.534.006-.179.009-.358.009-.537 0-.335-.008-.67-.024-1.003-.016-.332-.04-.662-.07-.988-.03-.326-.068-.648-.113-.964-.045-.316-.098-.626-.158-.928-.06-.302-.127-.598-.2-.887-.073-.289-.152-.572-.236-.847-.084-.275-.175-.544-.27-.804-.095-.26-.196-.513-.3-.76-.104-.247-.213-.491-.323-.727-.11-.236-.224-.464-.338-.686-.114-.222-.229-.436-.342-.644-.113-.208-.225-.408-.333-.603-.108-.195-.213-.384-.311-.566-.098-.182-.19-.357-.273-.524-.083-.167-.157-.326-.221-.476-.064-.15-.118-.291-.16-.423-.042-.132-.073-.256-.09-.37-.017-.114-.021-.218-.01-.31.011-.092.038-.174.078-.243.044-.08.11-.149.193-.204.083-.055.185-.096.305-.12.12-.024.26-.031.419-.031z"/>
+                </svg>
+              </div>
+              <h5 class="fw-bold mb-2">Secure & Private</h5>
+              <p class="text-muted small">Your notes are encrypted and protected with enterprise-grade security. We prioritize your privacy above all.</p>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="feature-card p-4 bg-white rounded-3 shadow-sm h-100">
+              <div class="feature-icon mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="#0d6efd" class="bi bi-subtract" viewBox="0 0 16 16">
+                  <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2H0a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h2V2zm2-2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H4a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v2H1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h2V2z"/>
+                </svg>
+              </div>
+              <h5 class="fw-bold mb-2">Organized & Structured</h5>
+              <p class="text-muted small">Keep your notes sorted by creation and modification dates. Easily navigate through your collection with intuitive controls.</p>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="feature-card p-4 bg-white rounded-3 shadow-sm h-100">
+              <div class="feature-icon mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="#0d6efd" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                  <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                  <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                </svg>
+              </div>
+              <h5 class="fw-bold mb-2">Easy Editing</h5>
+              <p class="text-muted small">Simple and intuitive editor with formatting options. Edit, refine, and polish your thoughts with ease.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works py-5">
+      <div class="container">
+        <h2 class="text-center mb-5 fw-bold">How It Works</h2>
+        <div class="row g-4">
+          <div class="col-md-6 col-lg-4">
+            <div class="step-card text-center">
+              <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px; font-size: 28px; font-weight: bold;">1</div>
+              <h5 class="fw-bold mb-2">Sign Up</h5>
+              <p class="text-muted">Create your account in seconds with just an email and password. No credit card required.</p>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <div class="step-card text-center">
+              <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px; font-size: 28px; font-weight: bold;">2</div>
+              <h5 class="fw-bold mb-2">Create Notes</h5>
+              <p class="text-muted">Click "Create a Note" and start typing. Add as many notes as you want without any limitations.</p>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <div class="step-card text-center">
+              <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px; font-size: 28px; font-weight: bold;">3</div>
+              <h5 class="fw-bold mb-2">Manage & Share</h5>
+              <p class="text-muted">Edit, delete, or view your notes anytime. Keep your digital workspace organized and productive.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="benefits-section py-5 bg-light">
+      <div class="container">
+        <h2 class="text-center mb-5 fw-bold">Why Choose Note Stream?</h2>
+        <div class="row g-5">
+          <div class="col-lg-6">
+            <div class="d-flex gap-3 mb-4">
+              <div class="flex-shrink-0">
+                <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white" style="width: 50px; height: 50px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.017 1.052L7.88 12.414a.75.75 0 1 1-1.06-1.06l5.858-5.859a.75.75 0 0 1 .06-.018z"/>
+                    <path d="M2.322 12.224c.35.066.679-.375.9-.75.692-1.1 2.22-3.102 3.994-4.817.78-.605 1.368-1.118 2.045-2.085.21-.33.669-.36.928-.159.259.2.321.746.13 1.025-.791 1.372-1.431 2.061-2.200 2.77-.784.745-1.823 1.787-2.52 2.6-.483.56-.643 1.262-.907 2.605-.196 1.001-.28 1.33-.886 1.813A1.122 1.122 0 0 1 2.322 12.224Z"/>
+                  </svg>
+                </div>
+              </div>
+              <div>
+                <h5 class="fw-bold">Free to Use</h5>
+                <p class="text-muted mb-0">Get started with our free tier and upgrade anytime. No hidden fees or surprise charges.</p>
+              </div>
+            </div>
+            <div class="d-flex gap-3 mb-4">
+              <div class="flex-shrink-0">
+                <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white" style="width: 50px; height: 50px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.017 1.052L7.88 12.414a.75.75 0 1 1-1.06-1.06l5.858-5.859a.75.75 0 0 1 .06-.018z"/>
+                    <path d="M2.322 12.224c.35.066.679-.375.9-.75.692-1.1 2.22-3.102 3.994-4.817.78-.605 1.368-1.118 2.045-2.085.21-.33.669-.36.928-.159.259.2.321.746.13 1.025-.791 1.372-1.431 2.061-2.2 2.77-.784.745-1.823 1.787-2.52 2.6-.483.56-.643 1.262-.907 2.605-.196 1.001-.28 1.33-.886 1.813A1.122 1.122 0 0 1 2.322 12.224Z"/>
+                  </svg>
+                </div>
+              </div>
+              <div>
+                <h5 class="fw-bold">24/7 Availability</h5>
+                <p class="text-muted mb-0">Access your notes anytime, anywhere on any device with internet connectivity.</p>
+              </div>
+            </div>
+            <div class="d-flex gap-3">
+              <div class="flex-shrink-0">
+                <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white" style="width: 50px; height: 50px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.017 1.052L7.88 12.414a.75.75 0 1 1-1.06-1.06l5.858-5.859a.75.75 0 0 1 .06-.018z"/>
+                    <path d="M2.322 12.224c.35.066.679-.375.9-.75.692-1.1 2.22-3.102 3.994-4.817.78-.605 1.368-1.118 2.045-2.085.21-.33.669-.36.928-.159.259.2.321.746.13 1.025-.791 1.372-1.431 2.061-2.2 2.77-.784.745-1.823 1.787-2.52 2.6-.483.56-.643 1.262-.907 2.605-.196 1.001-.28 1.33-.886 1.813A1.122 1.122 0 0 1 2.322 12.224Z"/>
+                  </svg>
+                </div>
+              </div>
+              <div>
+                <h5 class="fw-bold">Continuous Support</h5>
+                <p class="text-muted mb-0">Our dedicated support team is here to help with any questions or issues you may encounter.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="d-flex gap-3 mb-4">
+              <div class="flex-shrink-0">
+                <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white" style="width: 50px; height: 50px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.017 1.052L7.88 12.414a.75.75 0 1 1-1.06-1.06l5.858-5.859a.75.75 0 0 1 .06-.018z"/>
+                    <path d="M2.322 12.224c.35.066.679-.375.9-.75.692-1.1 2.22-3.102 3.994-4.817.78-.605 1.368-1.118 2.045-2.085.21-.33.669-.36.928-.159.259.2.321.746.13 1.025-.791 1.372-1.431 2.061-2.2 2.77-.784.745-1.823 1.787-2.52 2.6-.483.56-.643 1.262-.907 2.605-.196 1.001-.28 1.33-.886 1.813A1.122 1.122 0 0 1 2.322 12.224Z"/>
+                  </svg>
+                </div>
+              </div>
+              <div>
+                <h5 class="fw-bold">Automatic Sync</h5>
+                <p class="text-muted mb-0">Changes are automatically synced across all your devices for seamless productivity.</p>
+              </div>
+            </div>
+            <div class="d-flex gap-3 mb-4">
+              <div class="flex-shrink-0">
+                <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white" style="width: 50px; height: 50px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.017 1.052L7.88 12.414a.75.75 0 1 1-1.06-1.06l5.858-5.859a.75.75 0 0 1 .06-.018z"/>
+                    <path d="M2.322 12.224c.35.066.679-.375.9-.75.692-1.1 2.22-3.102 3.994-4.817.78-.605 1.368-1.118 2.045-2.085.21-.33.669-.36.928-.159.259.2.321.746.13 1.025-.791 1.372-1.431 2.061-2.2 2.77-.784.745-1.823 1.787-2.52 2.6-.483.56-.643 1.262-.907 2.605-.196 1.001-.28 1.33-.886 1.813A1.122 1.122 0 0 1 2.322 12.224Z"/>
+                  </svg>
+                </div>
+              </div>
+              <div>
+                <h5 class="fw-bold">Full Control</h5>
+                <p class="text-muted mb-0">You own your data. Complete control over your notes with the ability to export at any time.</p>
+              </div>
+            </div>
+            <div class="d-flex gap-3">
+              <div class="flex-shrink-0">
+                <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white" style="width: 50px; height: 50px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.017 1.052L7.88 12.414a.75.75 0 1 1-1.06-1.06l5.858-5.859a.75.75 0 0 1 .06-.018z"/>
+                    <path d="M2.322 12.224c.35.066.679-.375.9-.75.692-1.1 2.22-3.102 3.994-4.817.78-.605 1.368-1.118 2.045-2.085.21-.33.669-.36.928-.159.259.2.321.746.13 1.025-.791 1.372-1.431 2.061-2.2 2.77-.784.745-1.823 1.787-2.52 2.6-.483.56-.643 1.262-.907 2.605-.196 1.001-.28 1.33-.886 1.813A1.122 1.122 0 0 1 2.322 12.224Z"/>
+                  </svg>
+                </div>
+              </div>
+              <div>
+                <h5 class="fw-bold">Regular Updates</h5>
+                <p class="text-muted mb-0">We continuously improve the platform with new features and enhancements based on user feedback.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section py-5 bg-primary text-white">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-8">
+            <h2 class="fw-bold mb-2">Ready to Transform Your Note-Taking?</h2>
+            <p class="mb-0 lead">Join thousands of users who are already boosting their productivity with Note Stream. Start for free today—no credit card required.</p>
+          </div>
+          <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+            <% if (!user) { %>
+              <a href="/auth/register" class="btn btn-light btn-lg">Start Free Trial</a>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </section>
   </body>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </html>

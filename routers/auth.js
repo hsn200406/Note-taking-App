@@ -97,15 +97,23 @@ router.post('/register', async (req, res, next) => {
 
 // Login Existing User
 router.post('/login', (req, res, next) => {
-  passport.authenticate('local', (err, user, info) => {
+  passport.authenticate('local', async (err, user, info) => {
     if (err) return next(err);
     
     if (!user) {
       return res.render('login', { error: info.message, page: 'login', user: null });
     }
 
-    req.login(user, (err) => {
+    req.login(user, async (err) => {
       if (err) return next(err);
+      
+      // Update lastLoginAt timestamp
+      try {
+        await User.findByIdAndUpdate(user.id, { lastLoginAt: new Date() });
+      } catch (error) {
+        console.error('Error updating last login time:', error);
+      }
+      
       res.redirect('/home');
     });
 
