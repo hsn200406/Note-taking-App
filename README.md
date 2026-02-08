@@ -1,27 +1,37 @@
 # Note Stream - Professional Note-Taking Application
 
-A full-stack web application for creating, managing, and organizing your personal notes with a clean, intuitive interface. Build with modern web technologies and professional design principles.
+A full-stack web application for creating, managing, and organizing your personal notes with a clean, intuitive interface. Built with modern web technologies, professional design principles, and a powerful rich text editor.
 
 ## 📋 Overview
 
-Note Stream is a secure, user-friendly note-taking application that allows users to create, edit, view, and delete notes with ease. The application features user authentication, a professional settings page, and a beautiful, responsive user interface.
+Note Stream is a secure, user-friendly note-taking application that allows users to create, edit, view, and delete notes with ease. The application features user authentication, a professional settings page, advanced search functionality, and a beautiful, responsive user interface powered by the Quill rich text editor.
 
 ## ✨ Features
 
 ### Core Features
 - **User Authentication**: Secure registration and login system with password hashing using PBKDF2
-- **Create Notes**: Easily create new notes with title and content
+- **Create Notes**: Easily create new notes with title and rich content using Quill editor
 - **View Notes**: Browse all your notes in a clean, organized list view
 - **Edit Notes**: Modify existing notes with automatic timestamp tracking
 - **Delete Notes**: Remove notes you no longer need
 - **Sort & Organization**: Notes are automatically sorted by last updated date and creation date
+- **Search Functionality**: Powerful search that checks both note titles and content with real-time filtering
+
+### Rich Text Editing
+- **Quill Rich Text Editor**: Professional text editor with formatting options
+- **Text Formatting**: Bold, italic, underline, code blocks, and lists
+- **Delta Format Storage**: Uses Quill's Delta format for full-fidelity content preservation
+- **Large Editor Canvas**: Spacious editing area (500px on desktop) for comfortable writing
+- **Fallback Support**: HTML fallback for compatibility and legacy content
 
 ### User-Friendly Features
 - **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
 - **Professional Settings Page**: Manage account information and view statistics
 - **Account Statistics**: Track total notes created and account age
 - **Beautiful UI**: Modern, gradient-based design with smooth animations and transitions
-- **Clickable Note Cards**: Click any note card to view, or use action buttons for edit/delete
+- **Modern Editor Interface**: Professional, spacious note editing with enhanced styling
+- **Search Bar**: Elegant search interface with clear button and smooth animations
+- **Search Button**: Interactive search button with ripple effect animations
 
 ### Security Features
 - **Secure Password Hashing**: PBKDF2 with 310,000 iterations for secure password storage
@@ -42,14 +52,15 @@ Note Stream is a secure, user-friendly note-taking application that allows users
 ### Frontend
 - **HTML5**: Semantic markup for web pages
 - **CSS3**: Custom styling with gradients, animations, and responsive layouts
-- **EJS (Embedded JavaScript)**:  Server-side templating engine
+- **EJS (Embedded JavaScript)**: Server-side templating engine
 - **Bootstrap 5**: Responsive UI framework for components and grid system
+- **Quill Editor**: Rich text editor for professional note content
 - **JavaScript (Vanilla)**: Client-side interactivity and form handling
 
 ### Development Tools
 - **Method Override**: HTTP verb tunneling for PUT/DELETE requests in forms
 - **Express Sessions**: Server-side session management
-- **dotenv**: Environment variable management (if needed)
+- **dotenv**: Environment variable management
 
 ## 📦 Project Structure
 
@@ -131,10 +142,15 @@ Note-taking-App/
 4. Click "Save Note" to store it
 
 ### Managing Notes
-- **View**: Click any note card to view its full content
-- **Edit**: Click the "Edit" button to modify a note
+- **View**: Click "View" button or note title to view its full content
+- **Edit**: Click the "Edit" button to modify a note with Quill editor
 - **Delete**: Click the "Delete" button to remove a note (confirmation required)
 - **Sort**: Notes are automatically sorted by last updated date
+- **Search**: Use the search bar to find notes by title or content
+  1. Type your search query in the search bar
+  2. Click the blue search button or press Enter
+  3. Results update in real-time showing matching notes
+  4. Click the × button to clear your search and see all notes again
 
 ### Settings
 1. Click the "Settings" gear icon in the navigation bar
@@ -156,20 +172,14 @@ Note-taking-App/
 - `POST /auth/logout` - Logout user
 
 ### Notes Routes (`/notes`) - *Requires Login*
-- `GET /notes` - Display all user notes
+- `GET /notes` - Display all user notes (supports search via query parameter)
+- `GET /notes` with `?search=query` - Search notes by title or content
 - `GET /notes/new` - Display new note form
-- `POST /notes` - Create new note
-- `GET /notes/:id` - View single note
+- `POST /notes` - Create new note with rich text content
+- `GET /notes/:id` - View single note with formatted content
 - `GET /notes/:id/edit` - Display edit form
-- `PUT /notes/:id` - Update note
+- `PUT /notes/:id` - Update note with Delta format preservation
 - `DELETE /notes/:id` - Delete note
-
-### Users Routes (`/users`) - *Requires Login*
-- `GET /users/settings` - Display settings page
-- `GET /users/profile` - Get user profile (JSON)
-- `GET /users/stats` - Get account statistics
-- `POST /users/verify-password` - Verify password for account deletion
-- `DELETE /users/account` - Delete user account
 
 ## 🔒 Security Features
 
@@ -212,21 +222,27 @@ Note-taking-App/
 ```javascript
 {
   title: String (required),
-  content: String (required),
+  content: String (required, HTML content),
+  contentDelta: Object (Quill Delta format for full fidelity),
   user: ObjectId (reference to User),
   createdAt: Date (default: now),
-  updatedAt: Date
+  updatedAt: Date (tracks last modification)
 }
 ```
 
 ## 🎨 Design Highlights
 
-- **Gradient Headers**: Eye-catching blue gradient backgrounds (#0d6efd to #0a58ca)
+- **Modern Editor Interface**: Large, professional note editing area (500px height on desktop)
+- **Gradient Backgrounds**: Eye-catching blue gradient backgrounds (#0d6efd to #0a58ca)
 - **Card-Based Layout**: Clean, organized note cards with hover effects
+- **Rich Text Toolbar**: Quill editor toolbar with formatting options
 - **Responsive Grid**: Bootstrap grid system for perfect alignment on all devices
 - **Danger Zone Styling**: Red gradient backgrounds for destructive actions
 - **Smooth Animations**: Transitions and transforms for interactive elements
+- **Search Interface**: Elegant search bar with icon and smooth button animations
+- **Ripple Effects**: Interactive search button with expanding ripple on hover
 - **Professional Typography**: Clear hierarchy and readable fonts
+- **Mobile Responsive**: Optimized layouts for tablets and mobile devices
 
 ## 🤝 Contributing
 
