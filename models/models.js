@@ -10,6 +10,10 @@ const noteSchema = new Schema({
         type: String,
         required: true
     },
+    contentDelta: {
+        type: Object,
+        required: true
+    },
     date: {
         type: Date,
         default: Date.now

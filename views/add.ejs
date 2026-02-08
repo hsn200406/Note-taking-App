@@ -9,16 +9,19 @@
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
     rel="stylesheet"
   >
+
+  <!-- Quill CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
+
   <link rel="stylesheet" href="/stylesheets/style.css">
 </head>
 <body>
   <%- include('partials/header', { page: 'add', user: user }) %>
   <div class="container mt-5">
-
     <h1 class="text-center mb-4">Create Note</h1>
-
     <div class="card card-body mx-auto" style="max-width: 600px;">
-      <form action="/notes" method="POST">
+      <form id="noteForm" action="/notes" method="POST">
+        <!-- Title input -->
         <div class="mb-3">
           <label class="form-label">Title</label>
           <input
@@ -26,27 +29,73 @@
             name="title"
             class="form-control"
             required
+            value="<%= userInput ? userInput.title : '' %>"
           >
         </div>
 
-        <div class="mb-3">
-          <label class="form-label">Content</label>
-          <textarea
-            name="content"
-            class="form-control"
-            rows="5"
-            required
-          ></textarea>
-        </div>
+        <!-- Quill editor -->
+        <%- include('partials/content', { userInput: userInput }) %>
 
-        <div class="d-flex justify-content-between">
+        <!-- Submit buttons -->
+        <div class="d-flex justify-content-between mt-3">
           <button type="submit" class="btn btn-success">Create Note</button>
           <a href="/notes" class="btn btn-secondary">Cancel</a>
         </div>
+
+        <!-- Error message -->
+        <% if (error) { %>
+          <div class="alert alert-danger mt-3">
+            <%= error %>
+          </div>
+        <% } %>
       </form>
     </div>
 
+    
   </div>
+
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+  <script>
+  window.addEventListener('DOMContentLoaded', () => {
+    const editorDiv = document.getElementById('editor');
+    const previousContent = editorDiv.dataset.content || '';
+
+    const quill = new Quill('#editor', {
+      theme: 'snow',
+      placeholder: 'Write your note here...',
+      modules: {
+        toolbar: [
+          [{ header: [1, 2, 3, false] }],
+          ['bold', 'italic', 'underline'],
+          [{ list: 'ordered' }, { list: 'bullet' }, { list: 'check' }],
+          ['code-block'],
+          ['clean']
+        ]
+      }
+    });
+
+    // Preload content if editing
+    quill.root.innerHTML = previousContent;
+
+    // Submit handler
+    const form = document.getElementById('noteForm');
+    form.addEventListener('submit', function(e) {
+      const htmlInput = document.getElementById('content');
+      const deltaInput = document.getElementById('contentDelta');
+
+      htmlInput.value = quill.root.innerHTML;          // keeps HTML (for display)
+      deltaInput.value = JSON.stringify(quill.getContents()); // keeps Delta (for full fidelity)
+
+      if (quill.getText().trim().length === 0) {
+        e.preventDefault();
+        alert('Content cannot be empty');
+        return;
+      }
+    });
+
+  });
+  </script>
 </body>
 </html>

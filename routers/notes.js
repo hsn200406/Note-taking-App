@@ -7,8 +7,8 @@ router.get('/', async (req, res) => {
     try {
         const notes = await Note.find({ user: req.user.id })
             .sort({ 
-                updatedAt: -1,  // first sort by updatedAt descending
-                createdAt: -1   // then sort by createdAt descending if no updatedAt
+                createdAt: -1,   // then sort by createdAt descending if no updatedAt
+                updatedAt: -1  // first sort by updatedAt descending
             });
 
         res.render('index', { title: 'Note Taking App', notes, user: req.user, page: 'notes' });
@@ -21,7 +21,12 @@ router.get('/', async (req, res) => {
 
 // Show create form
 router.get('/new', (req, res) => {
-    res.render('add', { user: req.user, page: 'notes'});
+    res.render('add', {
+        user: req.user,
+        page: 'notes',
+        userInput: {title: '', content: ''},
+        error: ""
+    });
 });
 
 // Show edit form
@@ -29,7 +34,13 @@ router.get('/:id/edit', async (req, res) => {
     try {
         const note = await Note.findById(req.params.id);
         if (!note) return res.status(404).send('Note not found');
-        res.render('edit', { note, user: req.user, page: 'notes' });
+
+        res.render('edit', {
+            note,
+            user: req.user,
+            page: 'notes',
+            userInput: { title: note.title, content: note.content }, // <-- key change
+            error: "" });
     } catch (err) {
         console.error(err);
         res.status(500).send('Error loading edit page');
@@ -38,19 +49,43 @@ router.get('/:id/edit', async (req, res) => {
 
 // Add new note
 router.post('/', async (req, res) => {
-    const { title, content } = req.body;
-    if (!title || !content || !title.trim() || !content.trim()) {
-        return res.status(400).send({ message: 'Title and content are required' });
+    const { title, content, contentDelta } = req.body;
+
+    // Validate title
+    if (!title.trim()) {
+        return res.render('add', { 
+            error: 'Title cannot be empty', 
+            user: req.user, 
+            page: 'notes',
+            userInput: { title, content } // preserve what user typed
+        });
     }
+
+    // Validate content
+    if (!content) {
+        return res.render('add', { 
+            error: 'Content cannot be empty', 
+            user: req.user, 
+            page: 'notes',
+            userInput: { title, content } // preserve what user typed
+        });
+    }
+
     try {
-        const newNote = new Note({ title: title.trim(), content: content.trim(), user: req.user.id });
-        const result = await newNote.save();
-        // res.status(201).json({ message: 'Note added successfully', note: result });
+        const newNote = new Note({ 
+            title: title.trim(), 
+            content, 
+            contentDelta: JSON.parse(contentDelta),
+            user: req.user.id 
+        });
+        await newNote.save();
         res.redirect('/notes');
     } catch (err) {
+        console.error(err);
         res.status(500).json({ message: 'Error adding note', error: err.message });
     }
 });
+
 
 router.get('/:id', async (req, res) => {
   try {
@@ -76,8 +111,8 @@ router.get('/:id', async (req, res) => {
 // Update note
 router.put('/:id', async (req, res) => {
     const { id } = req.params;
-    const { title, content } = req.body;
-    if (!title || !content || !title.trim() || !content.trim()) {
+    const { title, content, contentDelta } = req.body;
+    if (!title || !content || !title.trim() || !content) {
         return res.status(400).send({ message: 'Title and content are required' });
     }
     try {
@@ -85,7 +120,8 @@ router.put('/:id', async (req, res) => {
             {_id: id, user: req.user.id},
             { 
                 title: title.trim(),
-                content: content.trim(),
+                content,
+                contentDelta: JSON.parse(contentDelta),
                 updatedAt: new Date()
              },
             { new: true },

@@ -4,10 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Edit Note</title>
-  <link 
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" 
-    rel="stylesheet"
-  >
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
   <link rel="stylesheet" href="/stylesheets/style.css">
 </head>
 <body>
@@ -17,36 +16,87 @@
     <h1 class="text-center mb-4">Edit Note</h1>
 
     <div class="card card-body mx-auto" style="max-width: 600px;">
-      <form action="/notes/<%= note._id %>?_method=PUT" method="POST">
+      <form id="noteForm" action="/notes/<%= note._id %>?_method=PUT" method="POST">
+        <!-- Title input -->
         <div class="mb-3">
           <label class="form-label">Title</label>
           <input 
             type="text" 
             name="title" 
-            value="<%= note.title %>" 
             class="form-control" 
             required
+            value="<%= note.title %>"
           >
         </div>
 
-        <div class="mb-3">
-          <label class="form-label">Content</label>
-          <textarea 
-            name="content" 
-            class="form-control" 
-            rows="5" 
-            required
-          ><%= note.content %></textarea>
-        </div>
+        <!-- Quill editor -->
+        <%- include('partials/content', { userInput: { content: note.content } }) %>
 
-        <div class="d-flex justify-content-between">
+        <!-- Submit buttons -->
+        <div class="d-flex justify-content-between mt-3">
           <button type="submit" class="btn btn-success">Save Changes</button>
           <a href="/notes" class="btn btn-secondary">Cancel</a>
         </div>
+
+        <!-- Error message -->
+        <% if (error) { %>
+          <div class="alert alert-danger mt-3">
+            <%= error %>
+          </div>
+        <% } %>
       </form>
     </div>
-
+    
   </div>
+
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+
+  <script>
+  window.addEventListener('DOMContentLoaded', () => {
+    const editorDiv = document.getElementById('editor');
+
+    const quill = new Quill('#editor', {
+      theme: 'snow',
+      placeholder: 'Write your note here...',
+      modules: {
+        toolbar: [
+          [{ header: [1, 2, 3, false] }],
+          ['bold', 'italic', 'underline'],
+          [{ list: 'ordered' }, { list: 'bullet' }, { list: 'check' }],
+          ['code-block'],
+          ['clean']
+        ]
+      }
+    });
+
+    // Load contentDelta if exists, otherwise fallback to HTML
+    const delta = <%- JSON.stringify(note.contentDelta || { ops: [] }) %>;
+    if (delta.ops.length > 0) {
+      quill.setContents(delta);
+    } else {
+      quill.root.innerHTML = editorDiv.dataset.content || '';
+    }
+
+    // Submit handler
+    const form = document.getElementById('noteForm');
+    form.addEventListener('submit', function(e) {
+      // Save both HTML and Delta
+      const contentInput = document.getElementById('content');
+      contentInput.value = quill.root.innerHTML;
+
+      const deltaInput = document.getElementById('contentDelta');
+      deltaInput.value = JSON.stringify(quill.getContents());
+
+      if (quill.getText().trim().length === 0) {
+        e.preventDefault();
+        alert('Content cannot be empty');
+        return;
+      }
+    });
+  });
+  </script>
+
 </body>
 </html>

@@ -20,7 +20,7 @@
         <div class="row align-items-center">
           <div class="col-lg-6 mb-4 mb-lg-0">
             <h1 class="display-4 fw-bold mb-4">
-              Welcome to Note Stream<%= user ? ', ' + user.username : '' %>
+              Welcome to Note Stream<%= user ? ', ' + user.username.toUpperCase() : '' %>
             </h1>
             <p class="lead mb-4">Your intelligent note-taking companion designed for professionals, students, and creative minds. Capture your thoughts, organize your ideas, and unlock your full potential with our intuitive and powerful note-taking platform.</p>
             <div class="d-flex gap-3 flex-wrap">
