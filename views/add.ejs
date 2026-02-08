@@ -17,41 +17,36 @@
 </head>
 <body>
   <%- include('partials/header', { page: 'add', user: user }) %>
-  <div class="container mt-5">
-    <h1 class="text-center mb-4">Create Note</h1>
-    <div class="card card-body mx-auto" style="max-width: 600px;">
-      <form id="noteForm" action="/notes" method="POST">
-        <!-- Title input -->
-        <div class="mb-3">
-          <label class="form-label">Title</label>
-          <input
-            type="text"
-            name="title"
-            class="form-control"
-            required
-            value="<%= userInput ? userInput.title : '' %>"
-          >
+  <div class="note-editor-wrapper">
+    <h1>Create Note</h1>
+    <form id="noteForm" action="/notes" method="POST" class="note-form-container">
+      <!-- Title input -->
+      <div class="note-title-group">
+        <label>Title</label>
+        <input
+          type="text"
+          name="title"
+          required
+          value="<%= userInput ? userInput.title : '' %>"
+        >
+      </div>
+
+      <!-- Quill editor -->
+      <%- include('partials/content', { userInput: userInput }) %>
+
+      <!-- Submit buttons -->
+      <div class="note-button-group">
+        <button type="submit" class="btn-primary-custom">Create Note</button>
+        <a href="/notes" class="btn-secondary-custom">Cancel</a>
+      </div>
+
+      <!-- Error message -->
+      <% if (error) { %>
+        <div class="alert-error">
+          <%= error %>
         </div>
-
-        <!-- Quill editor -->
-        <%- include('partials/content', { userInput: userInput }) %>
-
-        <!-- Submit buttons -->
-        <div class="d-flex justify-content-between mt-3">
-          <button type="submit" class="btn btn-success">Create Note</button>
-          <a href="/notes" class="btn btn-secondary">Cancel</a>
-        </div>
-
-        <!-- Error message -->
-        <% if (error) { %>
-          <div class="alert alert-danger mt-3">
-            <%= error %>
-          </div>
-        <% } %>
-      </form>
-    </div>
-
-    
+      <% } %>
+    </form>
   </div>
 
   <!-- Scripts -->

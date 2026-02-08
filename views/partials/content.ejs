@@ -1,11 +1,11 @@
-<div class="mb-3">
-  <label class="form-label">Content</label>
+<div class="note-content-group">
+  <label>Content</label>
   <!-- Quill editor -->
-  <div id="editor" style="height: 200px;" data-content="<%- userInput ? userInput.content : '' %>"></div>
+  <div id="editor" data-content="<%- userInput ? userInput.content : '' %>"></div>
 
   <!-- Hidden input that will actually be submitted -->
   <input type="hidden" name="content" id="content" required>
 
-  <!-- NEW hidden input for Delta -->
+  <!-- Hidden input for Delta -->
   <input type="hidden" name="contentDelta" id="contentDelta">
 </div>

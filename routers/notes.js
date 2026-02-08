@@ -5,13 +5,38 @@ const { Note } = require('../models/models');
 // Display all notes (main page)
 router.get('/', async (req, res) => {
     try {
-        const notes = await Note.find({ user: req.user.id })
-            .sort({ 
-                createdAt: -1,   // then sort by createdAt descending if no updatedAt
-                updatedAt: -1  // first sort by updatedAt descending
-            });
+        const searchQuery = req.query.search || ''; // Get search parameter
+        let notes;
 
-        res.render('index', { title: 'Note Taking App', notes, user: req.user, page: 'notes' });
+        if (searchQuery.trim()) {
+            // Search in both title and content using regex for case-insensitive matching
+            notes = await Note.find({
+                user: req.user.id,
+                $or: [
+                    { title: { $regex: searchQuery, $options: 'i' } },  // Search title (case-insensitive)
+                    { content: { $regex: searchQuery, $options: 'i' } }  // Search content (case-insensitive)
+                ]
+            })
+            .sort({ 
+                updatedAt: -1,   // first sort by updatedAt descending
+                createdAt: -1    // then sort by createdAt descending if no updatedAt
+            });
+        } else {
+            // Get all notes if no search query
+            notes = await Note.find({ user: req.user.id })
+                .sort({ 
+                    updatedAt: -1,   // first sort by updatedAt descending
+                    createdAt: -1    // then sort by createdAt descending if no updatedAt
+                });
+        }
+
+        res.render('index', { 
+            title: 'Note Taking App', 
+            notes, 
+            user: req.user, 
+            page: 'notes',
+            searchQuery: searchQuery // Pass search query to template
+        });
     } catch (err) {
         console.error(err);
         res.status(500).send({ message: 'Error retrieving notes' });

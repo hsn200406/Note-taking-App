@@ -2,35 +2,51 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title><%= note.title %></title>
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View Note</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
+  <link rel="stylesheet" href="/stylesheets/style.css">
 </head>
-
 <body>
-<%- include('partials/header', { page: 'notes', user: user }) %>
 
-  <div class="container mt-5">
-    <h1 class="mb-3"><%= note.title %></h1>
+  <%- include('partials/header', { page: 'notes', user: user }) %>
 
-    <div class="card">
-      <div class="card-body">
-        <p class="card-text" style="white-space: pre-wrap;">
-          <%= note.content %>
-        </p>
-      </div>
-    </div>
+  <div class="view-note-wrapper">
+    <h1><%= note.title %></h1>
 
-    <div class="mt-4 d-flex gap-2">
-      <a href="/notes/<%= note._id %>/edit" class="btn btn-warning">
-        Edit
-      </a>
-      <a href="/notes" class="btn btn-secondary">
-        Back
-      </a>
+    <!-- Editor container -->
+    <div id="editor"></div>
+
+    <div class="back-button-container">
+      <a href="/notes" class="btn-secondary-custom">Back</a>
     </div>
   </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const quill = new Quill('#editor', {
+        theme: 'snow',
+        readOnly: true,
+        modules: {
+          toolbar: false
+        }
+      });
+
+      // Load Delta first (best), fallback to HTML
+      const delta = <%- JSON.stringify(note.contentDelta || null) %>;
+
+      if (delta && delta.ops && delta.ops.length > 0) {
+        quill.setContents(delta);
+      } else {
+        quill.root.innerHTML = <%- JSON.stringify(note.content || '') %>;
+      }
+    });
+  </script>
+
 </body>
 </html>
